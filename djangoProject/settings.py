@@ -26,12 +26,20 @@ def generate_secret_key():
 
 def ensure_secret_key():
     secret = os.getenv("DJANGO_SECRET_KEY")
-    if secret:
+
+    if secret and secret.strip():
         return secret
 
-    secret = generate_secret_key()
-    with open(ENV_FILE, "a") as f:
-        f.write(f"\nDJANGO_SECRET_KEY={secret}\n")
+    from django.core.management.utils import get_random_secret_key
+    secret = get_random_secret_key()
+
+    try:
+        with open(ENV_FILE, "a") as f:
+            f.write(f"\nDJANGO_SECRET_KEY={secret}\n")
+    except Exception:
+        # Docker-safe fallback: do NOT crash
+        pass
+
     return secret
 
 
