@@ -1,0 +1,20 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      - mosquitto
+      - rabbitmq
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
